@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Pengumuman - StudyStrip</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpeg') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #b8d8b4 0%, #e8d3a7 50%, #e3b382 100%); font-family: 'Nunito', sans-serif; padding-top: 85px; padding-bottom: 50px; min-height: 100vh;}
+        .webtoon-nav { background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.5); position: fixed; width: 100%; top: 0; z-index: 1050; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .brand-title { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #2c2b45; margin: 0; font-weight: 900;}
+        .text-orange { color: #F9A826; }
+        .glass-card { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px rgba(0,0,0,0.04); overflow: hidden; transition: 0.3s; }
+        .coin-badge { background-color: rgba(255, 255, 255, 0.8); color: #d35400; padding: 6px 16px; border-radius: 20px; font-weight: bold; border: 1px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .progress-custom { height: 8px; background-color: rgba(0,0,0,0.1); border-radius: 4px; }
+        .progress-bar-custom { background-color: #F9A826; border-radius: 4px; }
+        .rank-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-number { font-weight: 900; font-size: 18px; width: 30px; text-align: center;}
+        .rank-1 { color: #F9A826; font-size: 22px; } .rank-2 { color: #9E9E9E; } .rank-3 { color: #CD7F32; }
+    </style>
+</head>
+<body>
+
+    <nav class="webtoon-nav">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-4">
+                <h1 class="brand-title m-0">STUDY<span class="text-orange">strip</span></h1>
+                <div class="d-none d-lg-flex align-items-center gap-4 ms-4 mt-1">
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/dashboard') }}" style="font-size: 15px; padding-bottom: 4px;">
+                        Beranda
+                    </a>
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="#" style="font-size: 15px; padding-bottom: 4px;">
+                        <i class="fa-solid fa-puzzle-piece me-1"></i> Puzzle Interaktif
+                    </a>
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/siswa/katalog') }}" style="font-size: 15px; padding-bottom: 4px;">
+    Katalog Komik
+</a>
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/dashboard') }}#komik-utama" style="font-size: 15px; padding-bottom: 4px;">
+                        Katalog Komik
+                    </a>
+                    <a class="text-decoration-none fw-bold text-dark" href="#" style="font-size: 15px; border-bottom: 2px solid #F9A826; padding-bottom: 4px;">
+                        <i class="fa-solid fa-bullhorn me-1 text-warning"></i> Pengumuman
+                    </a>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="coin-badge"><i class="fa-solid fa-bolt text-warning me-1"></i> {{ Auth::user()->coins ?? 120 }} Koin</div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-dark rounded-pill fw-bold px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-user me-1"></i> {{ explode(' ', Auth::user()->name ?? 'Siswa')[0] }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-2">
+                        <li><a class="dropdown-item fw-bold py-2" href="{{ route('profile.edit') }}"><i class="fa-solid fa-gear me-2"></i>Pengaturan</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item fw-bold text-danger py-2"><i class="fa-solid fa-right-from-bracket me-2"></i>Keluar</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="row g-4">
+            
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <div class="bg-warning bg-opacity-25 p-3 rounded-circle me-3">
+                        <i class="fa-solid fa-bullhorn fs-3 text-warning" style="color: #d39e00 !important;"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold m-0 text-dark">Pusat Pengumuman</h4>
+                        <span class="text-muted small">Informasi dan update terbaru dari gurumu.</span>
+                    </div>
+                </div>
+
+                @forelse($pengumuman as $p)
+                <div class="card border-0 shadow-sm rounded-4 mb-3" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold text-dark mb-0">{{ $p->judul }}</h5>
+                            <span class="badge bg-light text-muted border"><i class="fa-regular fa-clock me-1"></i> {{ $p->created_at->diffForHumans() }}</span>
+                        </div>
+                        <p class="text-muted mb-0" style="line-height: 1.6;">{{ $p->isi_pesan }}</p>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-5">
+                    <i class="fa-regular fa-folder-open text-muted fs-1 mb-3 opacity-50"></i>
+                    <h6 class="text-muted fw-bold">Belum ada pengumuman saat ini.</h6>
+                </div>
+                @endforelse
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card p-4 mb-4 text-center mt-2">
+                    <img src="{{ Auth::user()->profile_picture ? asset('profil/'.Auth::user()->profile_picture) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}" 
+                         class="rounded-circle mb-3 bg-white" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <h5 class="fw-bold text-dark mb-1">{{ Auth::user()->name ?? 'Penjelajah' }}</h5>
+                    <div class="badge bg-dark rounded-pill px-3 py-2 mb-3">Level {{ Auth::user()->level ?? 1 }} : Pemula</div>
+                    <div class="text-start">
+                        <div class="d-flex justify-content-between fw-bold small text-muted mb-1">
+                            <span>EXP Terkumpul</span>
+                            <span class="text-orange">{{ Auth::user()->exp ?? 60 }} / 100</span>
+                        </div>
+                        <div class="progress-custom">
+                            <div class="progress-bar-custom h-100" style="width: {{ ((Auth::user()->exp ?? 60) / 100) * 100 }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-3">
+                    <h6 class="fw-bold text-center mt-2 mb-3" style="color: #2c2b45;">
+                        <i class="fa-solid fa-trophy text-warning me-2"></i> Top Penjelajah
+                    </h6>
+                    @foreach($top_siswa as $index => $siswa)
+                        <div class="rank-item {{ $siswa->id == Auth::id() ? 'bg-warning bg-opacity-10 rounded-3' : '' }}">
+                            <div class="rank-number rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
+                            <img src="{{ $siswa->profile_picture ? asset('profil/'.$siswa->profile_picture) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}" 
+                                 class="rounded-circle mx-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark lh-sm">
+                                    {{ $siswa->name }}
+                                    @if($siswa->id == Auth::id())
+                                        <span class="badge bg-primary ms-1" style="font-size: 9px;">KAMU</span>
+                                    @endif
+                                </div>
+                                <div class="text-muted" style="font-size: 11px;">Level {{ $siswa->level ?? 1 }}</div>
+                            </div>
+                            <div class="fw-bold text-success small">{{ $siswa->exp ?? 0 }} EXP</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

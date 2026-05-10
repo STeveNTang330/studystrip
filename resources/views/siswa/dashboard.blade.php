@@ -3,352 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Siswa - StudyStrip</title>
-    
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpeg') }}?v=3">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <title>Beranda - StudyStrip</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpeg') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fcfcfc;
-            background-image: 
-                radial-gradient(circle at 10% 90%, rgba(40, 167, 69, 0.4) 0%, transparent 80%),
-                radial-gradient(circle at 90% 90%, rgba(249, 168, 38, 0.5) 0%, transparent 80%),
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-            min-height: 100vh; color: #333;
-        }
-
-        .glass-navbar {
-            position: fixed; top: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; box-sizing: border-box; z-index: 100;
-        }
-        .nav-brand { display: flex; align-items: center; gap: 15px; }
-        .nav-brand h2 { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 24px; letter-spacing: 1px; }
-        .text-dark { color: #1A1A3A; } .text-orange { color: #F9A826; }
-
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-
-        /* --- TAMPILAN KOIN DI NAVBAR --- */
-        .coin-badge {
-            background: rgba(249, 168, 38, 0.2); border: 1px solid rgba(249, 168, 38, 0.5);
-            color: #E85D04; font-weight: 800; padding: 8px 15px; border-radius: 20px;
-            display: flex; align-items: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 10px rgba(249, 168, 38, 0.2);
-        }
-
-        .profile-dropdown { position: relative; display: inline-block; }
-        .profile-toggle {
-            background: transparent; border: none; font-size: 14px; font-weight: 600; color: #444;
-            cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; padding: 8px 15px; border-radius: 8px; transition: 0.3s;
-        }
-        .profile-toggle:hover { background: rgba(0, 0, 0, 0.05); }
-
-        .dropdown-menu {
-            position: absolute; right: 0; top: 110%;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border-radius: 12px; width: 180px; display: flex; flex-direction: column;
-            opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 200; overflow: hidden;
-        }
-        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .dropdown-item {
-            padding: 12px 16px; text-decoration: none; color: #444; font-size: 13px; font-weight: 600;
-            display: flex; align-items: center; gap: 10px; background: transparent; border: none; width: 100%; text-align: left; cursor: pointer; transition: 0.2s;
-        }
-        .dropdown-item:hover { background: rgba(249, 168, 38, 0.1); color: #F9A826; }
-        .dropdown-item.text-danger:hover { background: rgba(211, 47, 47, 0.1); color: #d32f2f; }
-        .dropdown-divider { height: 1px; background: rgba(0, 0, 0, 0.08); margin: 4px 0; }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 120px 20px 50px 20px; }
-
-        /* --- STATUS LEVEL & EXP SISWA --- */
-        .student-status-card {
-            background: linear-gradient(135deg, rgba(26, 26, 58, 0.9), rgba(40, 40, 80, 0.9));
-            border-radius: 20px; padding: 30px; display: flex; align-items: center; justify-content: space-between;
-            color: white; margin-bottom: 30px; box-shadow: 0 15px 30px rgba(26, 26, 58, 0.2);
-        }
-        .student-info h2 { margin: 0 0 5px 0; font-size: 24px; }
-        .student-info p { margin: 0; color: #b0abc3; font-size: 14px; }
-        
-        .exp-container { width: 300px; }
-        .exp-text { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #F9A826; }
-        .exp-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
-        
-        /* CSS EXP BAR YANG SUDAH DINAMIS */
-        .exp-bar-fill { height: 100%; background: linear-gradient(90deg, #F9A826, #E85D04); border-radius: 10px; transition: width 0.5s ease-in-out; }
-
-        .page-title { font-size: 22px; font-weight: 800; color: #1A1A3A; margin-bottom: 20px; }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 16px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); cursor: pointer; transition: 0.3s ease;
-        }
-        .glass-card.active-menu { border: 2px solid #28a745; background: rgba(255, 255, 255, 0.8); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(40, 167, 69, 0.15); }
-        .glass-card:hover { transform: translateY(-5px); }
-        .glass-card h3 { margin: 0 0 10px 0; font-size: 16px; color: #1A1A3A; display: flex; align-items: center; gap: 10px; }
-        
-        .content-panel { display: none; animation: fadeIn 0.4s ease-in-out; }
-        .content-panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- TOMBOL HINT GAME --- */
-        .btn-hint {
-            background: linear-gradient(135deg, #F9A826, #E85D04); color: white; border: none; padding: 12px 25px;
-            border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 15px;
-            display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(249, 168, 38, 0.4);
-            margin: 0 auto;
-        }
-        .btn-hint:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(249, 168, 38, 0.6); }
-        .btn-hint:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; color: #888; }
-        /* --- MANTRA RESPONSIVE UNTUK HP & TABLET (DASHBOARD SISWA) --- */
-        @media (max-width: 768px) {
-            /* 1. Rapikan Navbar */
-            .glass-navbar { padding: 15px 20px; }
-            .nav-brand h2 { font-size: 18px; }
-            .profile-toggle span { display: none; } /* Sembunyikan nama agar tidak sesak */
-            
-            /* 2. Rapikan Container Utama */
-            .container { padding-top: 100px; }
-            
-            /* 3. Rapikan Card Status (Level & EXP) */
-            .student-status-card {
-                flex-direction: column; text-align: center; gap: 20px; padding: 20px;
-            }
-            .exp-container { width: 100%; }
-            
-            /* 4. Jadikan Menu 3 Kolom menjadi 1 Kolom Memanjang */
-            div[style*="grid-template-columns: repeat(3, 1fr)"] {
-                grid-template-columns: 1fr !important;
-            }
-            
-            /* 5. Jadikan Daftar Komik 2 Kolom di Tablet */
-            div[style*="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))"] {
-                grid-template-columns: 1fr 1fr !important; 
-            }
-        }
-
-        /* Khusus untuk Layar HP yang sangat kecil */
-        @media (max-width: 480px) {
-            .student-info h2 { font-size: 20px; }
-            /* Jadikan Daftar Komik 1 Kolom di HP */
-            div[style*="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))"] {
-                grid-template-columns: 1fr !important; 
-            }
-        }
+        html { scroll-behavior: smooth; }
+        body { background: linear-gradient(135deg, #b8d8b4 0%, #e8d3a7 50%, #e3b382 100%); font-family: 'Nunito', sans-serif; padding-top: 85px; padding-bottom: 50px; min-height: 100vh;}
+        .webtoon-nav { background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.5); position: fixed; width: 100%; top: 0; z-index: 1050; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .brand-title { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #2c2b45; margin: 0; font-weight: 900;}
+        .text-orange { color: #F9A826; }
+        .glass-card { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px rgba(0,0,0,0.04); overflow: hidden; transition: 0.3s; }
+        .hero-carousel-item { border-radius: 20px; padding: 45px 40px; min-height: 260px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .carousel-indicators { margin-bottom: 10px; }
+        .carousel-indicators [data-bs-target] { width: 10px; height: 10px; border-radius: 50%; }
+        .comic-thumbnail { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; }
+        .comic-item:hover .comic-thumbnail { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .comic-title { font-weight: 800; color: #2c2b45; font-size: 16px; margin-bottom: 4px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .progress-custom { height: 8px; background-color: rgba(0,0,0,0.1); border-radius: 4px; }
+        .progress-bar-custom { background-color: #F9A826; border-radius: 4px; }
+        .coin-badge { background-color: rgba(255, 255, 255, 0.8); color: #d35400; padding: 6px 16px; border-radius: 20px; font-weight: bold; border: 1px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .rank-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-number { font-weight: 900; font-size: 18px; width: 30px; text-align: center;}
+        .rank-1 { color: #F9A826; font-size: 22px; } .rank-2 { color: #9E9E9E; } .rank-3 { color: #CD7F32; }
     </style>
 </head>
 <body>
 
-    <nav class="glass-navbar">
-        <div class="nav-brand"><h2><span class="text-dark">STUDY</span><span class="text-orange">strip</span></h2></div>
-        
-        <div class="nav-right">
-            <div class="coin-badge" id="coinDisplay">
-                <i class="fa-solid fa-coins"></i> <span id="coinAmount">{{ Auth::user()->coin ?? 0 }}</span>
-            </div>
-
-            <div class="profile-dropdown">
-                <button class="profile-toggle" id="profileToggle">
-                    Halo, <span class="text-orange">{{ Auth::user()->name ?? 'Siswa' }}</span>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 12px;"></i>
-                </button>
-
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                        <i class="fa-solid fa-user-pen"></i> Edit Profil
+    <nav class="webtoon-nav">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-4">
+                <h1 class="brand-title m-0">STUDY<span class="text-orange">strip</span></h1>
+                <div class="d-none d-lg-flex align-items-center gap-4 ms-4 mt-1">
+                    
+                    <a class="text-decoration-none fw-bold text-dark" href="{{ url('/dashboard') }}" style="font-size: 15px; border-bottom: 2px solid #F9A826; padding-bottom: 4px;">
+                        Beranda
                     </a>
-                    <div class="dropdown-divider"></div>
-                    <form action="{{ route('logout') ?? '#' }}" method="POST" style="margin:0;">
-                        @csrf
-                        <button type="submit" class="dropdown-item text-danger">
-                            <i class="fa-solid fa-right-from-bracket"></i> Keluar
-                        </button>
-                    </form>
+
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="#" style="font-size: 15px; padding-bottom: 4px;">
+                        Puzzle Interaktif
+                    </a>
+
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/siswa/kuis') }}" style="font-size: 15px; padding-bottom: 4px;">
+                        Kuis Akhir Bab
+                    </a>
+
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/siswa/katalog') }}" style="font-size: 15px; padding-bottom: 4px;">
+                        Katalog Komik
+                    </a>
+
+                    <a class="text-decoration-none fw-bold text-secondary transition" href="{{ url('/siswa/pengumuman') }}" style="font-size: 15px; padding-bottom: 4px;">
+                        Pengumuman
+                    </a>
+                    
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="coin-badge"><i class="fa-solid fa-bolt text-warning me-1"></i> {{ Auth::user()->coins ?? 120 }} Koin</div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-dark rounded-pill fw-bold px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-user me-1"></i> {{ explode(' ', Auth::user()->name ?? 'Siswa')[0] }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-2">
+                        <li><a class="dropdown-item fw-bold py-2" href="{{ route('profile.edit') }}"><i class="fa-solid fa-gear me-2"></i>Pengaturan</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item fw-bold text-danger py-2"><i class="fa-solid fa-right-from-bracket me-2"></i>Keluar</button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        
-        <div class="student-status-card">
-            <div class="student-info">
-                <h2>Selamat Belajar, {{ Auth::user()->name ?? 'Siswa' }}! 👋</h2>
-                <p>Selesaikan komik dan puzzle untuk naik level.</p>
-            </div>
+    <div class="container mt-3">
+        <div class="row g-4">
             
-            <div class="exp-container">
-                <div class="exp-text">
-                    <span>Level 1 : Pemula</span>
-                    <span>{{ Auth::user()->exp ?? 0 }} / 1000 EXP</span>
-                </div>
-                <div class="exp-bar-bg">
-                    <div class="exp-bar-fill" style="width: {{ min(((Auth::user()->exp ?? 0) / 1000) * 100, 100) }}%;"></div>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
-            <div class="glass-card" id="btn-materi" onclick="switchPanel('materi')">
-                <h3><i class="fa-solid fa-book-open" style="color: #F9A826;"></i> Ruang Baca</h3>
-                <p style="font-size: 12px; color: #555;">Baca komik interaktif yang diunggah gurumu.</p>
-            </div>
-            <div class="glass-card" id="btn-game" onclick="switchPanel('game')">
-                <h3><i class="fa-solid fa-puzzle-piece" style="color: #6f42c1;"></i> Puzzle AI</h3>
-                <p style="font-size: 12px; color: #555;">Mainkan puzzle dari potongan komik.</p>
-            </div>
-            <div class="glass-card" id="btn-kuis" onclick="switchPanel('kuis')">
-                <h3><i class="fa-solid fa-ranking-star" style="color: #28a745;"></i> Evaluasi Kuis</h3>
-                <p style="font-size: 12px; color: #555;">Uji pemahamanmu dan raih nilai terbaik.</p>
-            </div>
-        </div>
-
-        <hr style="border: none; height: 1px; background: rgba(0,0,0,0.1); margin-bottom: 30px;">
-
-        <div id="panel-materi" class="content-panel">
-            <h2 class="page-title"><i class="fa-solid fa-book-open" style="color:#F9A826;"></i> Daftar Komik Tersedia</h2>
-            
-            @if(!isset($comics) || $comics->isEmpty())
-                <div class="glass-card" style="cursor:default; text-align:center; padding:40px;">
-                    <i class="fa-solid fa-book-journal-whills" style="font-size:40px; color:#ddd; margin-bottom:15px;"></i>
-                    <p style="color:#888; margin:0;">Belum ada komik yang diunggah oleh guru saat ini.</p>
-                </div>
-            @else
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
-                    @foreach($comics as $comic)
-                        <div class="glass-card" style="display: flex; flex-direction: column; text-align: center; padding: 20px;">
-                            
-                            <div style="width: 100%; height: 120px; background: rgba(249, 168, 38, 0.1); border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center;">
-                                <i class="fa-solid fa-book-open-reader" style="font-size: 50px; color: #E85D04;"></i>
+            <div class="col-lg-8">
+                <div id="komik-utama" style="scroll-margin-top: 100px;">
+                    <div id="comicCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#comicCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#comicCarousel" data-bs-slide-to="1"></button>
+                        </div>
+                        <div class="carousel-inner rounded-4 shadow-sm">
+                            <div class="carousel-item active">
+                                <div class="hero-carousel-item" style="background: linear-gradient(to right, rgba(44, 43, 69, 0.95), rgba(44, 43, 69, 0.3)), url('https://img.freepik.com/free-vector/hand-drawn-science-education-background_23-2148499325.jpg') center/cover;">
+                                    <div style="position: relative; z-index: 2;">
+                                        <span class="badge bg-warning text-dark mb-3 fw-bold px-3 py-2 rounded-pill">Rilis Baru!</span>
+                                        <h2 class="fw-bold mb-2 text-white">Hukum Newton 1: Kelembaman</h2>
+                                        <p class="text-white opacity-75 mb-4" style="max-width: 80%;">Kenapa kita terdorong ke depan saat mobil direm mendadak? Temukan jawabannya di sini.</p>
+                                        <a href="{{ url('/tes-buku') }}" class="btn btn-light fw-bold rounded-pill px-4 text-dark shadow-sm">Baca Sekarang <i class="fa-solid fa-play ms-1"></i></a>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <h4 style="margin: 0 0 5px 0; color: #1A1A3A; font-size: 16px;">Bab {{ $comic->chapter_number }}</h4>
-                            <p style="margin: 0 0 20px 0; font-size: 13px; color: #666; font-weight: bold; flex-grow: 1;">{{ $comic->chapter_title }}</p>
-                            
-                            <a href="{{ route('comic.read', $comic->id) ?? '#' }}" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; display: block;">
-                                <i class="fa-solid fa-play"></i> Mulai Membaca
-                            </a>
+                            <div class="carousel-item">
+                                <div class="hero-carousel-item" style="background: linear-gradient(to right, rgba(44, 43, 69, 0.95), rgba(44, 43, 69, 0.3)), url('https://img.freepik.com/free-vector/flat-science-concept_23-2148530751.jpg') center/cover;">
+                                    <div style="position: relative; z-index: 2;">
+                                        <span class="badge bg-danger mb-3 fw-bold px-3 py-2 rounded-pill">Hot Update!</span>
+                                        <h2 class="fw-bold mb-2 text-white">Hukum Newton 3: Aksi Reaksi</h2>
+                                        <p class="text-white opacity-75 mb-4" style="max-width: 80%;">Rahasia bagaimana roket bisa terbang ke luar angkasa. Siap bereksperimen?</p>
+                                        <a href="{{ url('/tes-buku') }}" class="btn btn-light fw-bold rounded-pill px-4 text-dark shadow-sm">Baca Sekarang <i class="fa-solid fa-play ms-1"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#comicCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#comicCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <h5 class="fw-bold m-0" style="color: #2c2b45;">Katalog Episode Baru</h5>
+                        <a href="#" class="text-muted small fw-bold text-decoration-none">Lihat Semua ></a>
+                    </div>
+                    
+                    <div class="glass-card p-4">
+                        <div class="row g-4">
+                            <div class="col-6 col-md-4 comic-item">
+                                <a href="{{ url('/tes-buku') }}" class="text-decoration-none">
+                                    <div class="position-relative">
+                                        <img src="https://img.freepik.com/free-vector/flat-gravity-background_23-2149348981.jpg" class="comic-thumbnail" alt="Cover">
+                                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">Baru</span>
+                                    </div>
+                                    <div class="comic-title">Bab 1: Gaya & Gravitasi</div>
+                                    <div class="text-muted small fw-bold"><i class="fa-solid fa-star text-warning"></i> 9.8 • Fisika</div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-4 comic-item" style="opacity: 0.6;">
+                                <div class="position-relative">
+                                    <img src="https://img.freepik.com/free-vector/flat-science-concept_23-2148530751.jpg" class="comic-thumbnail" alt="Cover">
+                                    <span class="badge bg-dark position-absolute top-50 start-50 translate-middle"><i class="fa-solid fa-lock"></i></span>
+                                </div>
+                                <div class="comic-title">Bab 2: Aksi Reaksi</div>
+                                <div class="text-danger small fw-bold"><i class="fa-solid fa-circle-exclamation"></i> Selesaikan Bab 1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card p-4 mb-4 text-center">
+                    <img src="{{ Auth::user()->profile_picture ? asset('profil/'.Auth::user()->profile_picture) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}" 
+                         class="rounded-circle mb-3 bg-white" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <h5 class="fw-bold text-dark mb-1">{{ Auth::user()->name ?? 'Penjelajah' }}</h5>
+                    <div class="badge bg-dark rounded-pill px-3 py-2 mb-3">Level {{ Auth::user()->level ?? 1 }} : Pemula</div>
+                    <div class="text-start">
+                        <div class="d-flex justify-content-between fw-bold small text-muted mb-1">
+                            <span>EXP Terkumpul</span>
+                            <span class="text-orange">{{ Auth::user()->exp ?? 60 }} / 100</span>
+                        </div>
+                        <div class="progress-custom">
+                            <div class="progress-bar-custom h-100" style="width: {{ ((Auth::user()->exp ?? 60) / 100) * 100 }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="papan-peringkat" class="glass-card p-3">
+                    <h6 class="fw-bold text-center mt-2 mb-3" style="color: #2c2b45;">
+                        <i class="fa-solid fa-trophy text-warning me-2"></i> Top Penjelajah
+                    </h6>
+                    @foreach($top_siswa as $index => $siswa)
+                        <div class="rank-item {{ $siswa->id == Auth::id() ? 'bg-warning bg-opacity-10 rounded-3' : '' }}">
+                            <div class="rank-number rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
+                            <img src="{{ $siswa->profile_picture ? asset('profil/'.$siswa->profile_picture) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}" 
+                                 class="rounded-circle mx-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark lh-sm">
+                                    {{ $siswa->name }}
+                                    @if($siswa->id == Auth::id())
+                                        <span class="badge bg-primary ms-1" style="font-size: 9px;">KAMU</span>
+                                    @endif
+                                </div>
+                                <div class="text-muted" style="font-size: 11px;">Level {{ $siswa->level ?? 1 }}</div>
+                            </div>
+                            <div class="fw-bold text-success small">{{ $siswa->exp ?? 0 }} EXP</div>
                         </div>
                     @endforeach
                 </div>
-            @endif
-        </div>
-
-        <div id="panel-game" class="content-panel">
-            <h2 class="page-title"><i class="fa-solid fa-puzzle-piece" style="color:#6f42c1;"></i> Ruang Puzzle AI</h2>
-            
-            <div class="glass-card" style="cursor:default; text-align:center; padding:50px 40px; background: rgba(255, 255, 255, 0.6); position:relative;">
-                
-                <span style="position: absolute; top: 20px; right: 20px; background: rgba(111, 66, 193, 0.1); color: #6f42c1; font-size: 12px; font-weight: bold; padding: 6px 15px; border-radius: 20px;">
-                    <i class="fa-solid fa-robot"></i> AI Active
-                </span>
-
-                <i class="fa-solid fa-cubes-stacked" style="font-size:60px; color:#b0abc3; margin-bottom:20px;"></i>
-                <h3 style="justify-content: center; font-size: 22px;">Simulasi Papan Puzzle</h3>
-                <p style="color:#666; margin:0 auto 30px auto; max-width: 500px; font-size: 14px; line-height: 1.6;">
-                    Tempat gambar puzzle dirender oleh AI nantinya. Jika kamu merasa kesulitan menyusunnya, kamu bisa membeli petunjuk menggunakan koin belajarmu.
-                </p>
-
-                <button type="button" class="btn-hint" id="btnBuyHint" onclick="beliHint()">
-                    <i class="fa-solid fa-lightbulb"></i> Gunakan Hint (20 Koin)
-                </button>
             </div>
-        </div>
 
-        <div id="panel-kuis" class="content-panel">
-            <h2 class="page-title"><i class="fa-solid fa-ranking-star" style="color:#28a745;"></i> Evaluasi Kuis</h2>
-            <div class="glass-card" style="cursor:default; text-align:center; padding:40px;">
-                <i class="fa-solid fa-clipboard-question" style="font-size:40px; color:#ddd; margin-bottom:15px;"></i>
-                <p style="color:#888; margin:0;">Selesaikan komik terlebih dahulu untuk membuka kuis.</p>
-            </div>
         </div>
-
     </div>
 
-    <script>
-        // --- LOGIKA PERPINDAHAN TAB ---
-        function switchPanel(panelName) {
-            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.glass-card').forEach(btn => btn.classList.remove('active-menu'));
-            
-            document.getElementById('panel-' + panelName).classList.add('active');
-            document.getElementById('btn-' + panelName).classList.add('active-menu');
-            localStorage.setItem('activeSiswaTab', panelName);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let savedTab = localStorage.getItem('activeSiswaTab') || 'materi';
-            switchPanel(savedTab);
-        });
-
-        // --- LOGIKA DROPDOWN PROFIL ---
-        const profileToggle = document.getElementById('profileToggle');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-        if(profileToggle && dropdownMenu) {
-            profileToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            window.addEventListener('click', function(e) {
-                if (!profileToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.remove('show');
-                }
-            });
-        }
-
-        // --- LOGIKA AJAX UNTUK MEMBELI HINT (TERHUBUNG KE GameController) ---
-        function beliHint() {
-            // Ambil CSRF Token untuk keamanan Laravel
-            let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            let btnHint = document.getElementById('btnBuyHint');
-
-            // Nonaktifkan tombol sementara agar tidak diklik dua kali
-            btnHint.disabled = true;
-            btnHint.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-
-            fetch('{{ route("game.buyHint") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    // Update tampilan koin di navbar
-                    document.getElementById('coinAmount').innerText = data.sisa_koin;
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Petunjuk Ditemukan!',
-                        text: data.message + ' (Kepingan ' + data.hint.piece_id + ' diletakkan di ' + data.hint.position + ')',
-                        confirmButtonColor: '#F9A826'
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Koin Tidak Cukup!',
-                        text: data.message,
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Terjadi kesalahan pada sistem.', 'error');
-            })
-            .finally(() => {
-                // Kembalikan tombol seperti semula
-                btnHint.disabled = false;
-                btnHint.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Gunakan Hint (20 Koin)';
-            });
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

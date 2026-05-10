@@ -5,16 +5,19 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class SetUserOnline
 {
     public function handle(Request $request, Closure $next)
     {
-        // Jika ada user yang sedang login, update waktu last_seen-nya ke detik ini juga!
         if (Auth::check()) {
-            \Illuminate\Support\Facades\DB::table('users')
-                ->where('id', Auth::user()->id)
-                ->update(['last_seen' => now()]);
+            // Mencatat waktu aktif user saat ini ditambah 5 menit ke depan
+            $expiresAt = Carbon::now()->addMinutes(5);
+            
+            // Simpan status online ke dalam Cache memori (Sesuai dengan yang dicari oleh User.php)
+            Cache::put('user-is-online-' . Auth::user()->id, true, $expiresAt);
         }
 
         return $next($request);

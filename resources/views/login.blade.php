@@ -5,228 +5,238 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - StudyStrip</title>
     
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpeg') }}?v=3">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpeg') }}?v=4">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- BACKGROUND GRADASI HALUS --- */
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fcfcfc; 
-            background-image: 
-                radial-gradient(circle at 10% 90%, rgba(163, 116, 255, 0.65) 0%, transparent 80%),
-                radial-gradient(circle at 90% 90%, rgba(249, 168, 38, 0.65) 0%, transparent 80%),
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-            height: 100vh; display: flex; justify-content: center; align-items: center;
-        }
-
-        /* --- LIGHT GLASSMORPHISM PANEL --- */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 20px; padding: 40px; width: 320px;
-            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.05); 
-            text-align: center;
-            z-index: 10;
-        }
-
-        .glass-panel h2 {
-            margin-top: 0; font-family: 'Orbitron', sans-serif; font-size: 32px;
-            letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        
+        /* PANEL KIRI: Visual & Branding */
+        .auth-cover {
+            background: linear-gradient(135deg, #1A1A3A 0%, #2b2b5e 100%);
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
         }
         
-        .text-dark { color: #1A1A3A; } 
+        .auth-cover::before {
+            content: ''; position: absolute; top: -10%; left: -10%;
+            width: 400px; height: 400px; border-radius: 50%;
+            background: rgba(249, 168, 38, 0.1); filter: blur(40px); z-index: 1;
+        }
+        .auth-cover::after {
+            content: ''; position: absolute; bottom: -10%; right: -10%;
+            width: 300px; height: 300px; border-radius: 50%;
+            background: rgba(163, 116, 255, 0.15); filter: blur(40px); z-index: 1;
+        }
+
+        .cover-content { position: relative; z-index: 2; padding: 4rem 5rem; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .cover-title { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2; }
+        .cover-subtitle { font-size: 1.1rem; color: #a8a8c2; line-height: 1.6; max-width: 90%; }
+        
+        /* Kustomisasi Slider (Carousel) */
+        .carousel-indicators { margin-bottom: 2rem; justify-content: flex-start; margin-left: 5rem; }
+        .carousel-indicators [data-bs-target] { width: 10px; height: 10px; border-radius: 50%; background-color: rgba(255,255,255,0.4); border: none; margin: 0 5px; transition: 0.3s; }
+        .carousel-indicators .active { background-color: #F9A826; width: 25px; border-radius: 8px; }
+        .carousel-control-prev, .carousel-control-next { width: 5%; opacity: 0; transition: 0.3s; z-index: 10;}
+        .auth-cover:hover .carousel-control-prev, .auth-cover:hover .carousel-control-next { opacity: 0.7; }
+        .carousel-control-prev:hover, .carousel-control-next:hover { opacity: 1; }
+
+        /* PANEL KANAN: Form Area */
+        .auth-form-area { background-color: #f5f7f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .card-login { background: #ffffff; border: none; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04); width: 100%; max-width: 420px; }
+        .brand-title { font-family: 'Orbitron', sans-serif; font-size: 28px; letter-spacing: 1px; color: #1A1A3A; margin-bottom: 0; }
         .text-orange { color: #F9A826; }
-        .glass-panel p { margin-bottom: 30px; font-size: 14px; color: #555555; }
-
-        /* --- INPUT & TOMBOL MATA --- */
-        .input-group { margin-bottom: 20px; text-align: left; position: relative; }
-        .input-group label { display: block; margin-bottom: 8px; font-size: 13px; color: #333333; font-weight: 500; }
         
-        .input-group input {
-            width: 100%; padding: 12px; box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.6); 
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 8px; color: #333333; outline: none; transition: 0.3s;
-            padding-right: 40px;
-        }
-        .input-group input:focus { border-color: #F9A826; background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 8px rgba(249, 168, 38, 0.2); }
-
-        .toggle-password {
-            position: absolute; right: 12px; top: 38px; cursor: pointer; color: #777777; 
-            transition: color 0.3s ease; z-index: 2;
-        }
-        .toggle-password:hover { color: #F9A826; }
-
-        button {
-            width: 100%; padding: 12px; background: linear-gradient(135deg, #F9A826, #E85D04);
-            border: none; border-radius: 8px; color: white; font-size: 16px;
-            font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
-        }
-        button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4); }
-
-        .extra-links { margin-top: 25px; display: flex; flex-direction: column; gap: 12px; font-size: 12px; }
-        .extra-links a { color: #666666; text-decoration: none; transition: 0.3s; }
-        .extra-links a span { color: #E85D04; font-weight: bold; }
-        .extra-links a:hover { color: #1A1A3A; }
-
-        /* --- CSS LOADING BINTANG GLASSMORPHISM --- */
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.4); /* Kaca transparan terang */
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); /* Efek blur glassmorphism */
-            display: flex; justify-content: center; align-items: center; z-index: 99999; 
-            opacity: 0; visibility: hidden; transition: 0.4s ease;
-        }
-
-        .loading-overlay.active { opacity: 1; visibility: visible; }
-
-        .loader-content {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        .stars-ring {
-            width: 120px; height: 120px;
-            position: relative; display: flex;
-            justify-content: center; align-items: center;
-            color: #F9A826; 
-            animation: rotateManyStars 3s linear infinite; 
-            margin-bottom: 25px;
-        }
-
-        .stars-ring i {
-            font-size: 22px; position: absolute;
-            text-shadow: 0 0 15px rgba(249, 168, 38, 0.7);
-        }
-
-        .star-1 { transform: rotate(0deg) translate(50px); }
-        .star-2 { transform: rotate(72deg) translate(50px); }
-        .star-3 { transform: rotate(144deg) translate(50px); }
-        .star-4 { transform: rotate(216deg) translate(50px); }
-        .star-5 { transform: rotate(288deg) translate(50px); }
-
-        /* Teks diubah jadi warna gelap agar kontras dengan kaca terang */
-        .loading-text { 
-            color: #1A1A3A; font-family: 'Orbitron', sans-serif; font-size: 15px; 
-            letter-spacing: 3px; animation: pulseTextMany 1.5s infinite; margin:0; text-align:center; font-weight: 800;
-        }
-
-        @keyframes rotateManyStars {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes pulseTextMany {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
+        /* Kustomisasi Input Form */
+        .form-control { background-color: #f8f9fa; border: 1px solid #eaeaea; padding: 12px 15px; border-radius: 8px; font-size: 14px; }
+        .form-control:focus { background-color: #ffffff; border-color: #F9A826; box-shadow: none; }
+        .input-group:focus-within { box-shadow: 0 0 0 0.2rem rgba(249, 168, 38, 0.15); border-radius: 8px; }
+        .input-group-text { border: 1px solid #eaeaea; }
+        .form-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+        
+        .btn-primary-custom { background-color: #F9A826; border: none; color: white; font-weight: bold; padding: 12px; border-radius: 8px; transition: all 0.3s ease; }
+        .btn-primary-custom:hover { background-color: #e09622; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(249, 168, 38, 0.3); }
+        .btn-loading { cursor: not-allowed; opacity: 0.8; }
+        .spinner-border { width: 1.2rem; height: 1.2rem; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay" class="loading-overlay active">
-        <div class="loader-content">
-            <div class="stars-ring">
-                <i class="fa fa-star star-1"></i>
-                <i class="fa fa-star star-2"></i>
-                <i class="fa fa-star star-3"></i>
-                <i class="fa fa-star star-4"></i>
-                <i class="fa fa-star star-5"></i>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            
+            <div class="col-lg-6 d-none d-lg-block auth-cover position-relative">
+                
+                <div id="loginSlider" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="4000">
+                    
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#loginSlider" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#loginSlider" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#loginSlider" data-bs-slide-to="2"></button>
+                    </div>
+
+                    <div class="carousel-inner h-100">
+                        
+                        <div class="carousel-item active h-100">
+                            <div class="cover-content">
+                                <h1 class="cover-title">STUDY<span class="text-orange">strip</span></h1>
+                                <h2 class="mb-4 fw-bold" style="font-size: 2rem;">Revolusi Belajar Fisika<br>Lewat Petualangan.</h2>
+                                <p class="cover-subtitle">Meninggalkan metode hafalan rumus yang membosankan. StudyStrip memadukan komik digital dengan pendekatan <i>engineering mindset</i> untuk memecahkan masalah fisika secara interaktif.</p>
+                                
+                                <div class="mt-5 d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center text-light opacity-75">
+                                        <i class="fa-solid fa-circle-check text-orange me-3 fs-5"></i>
+                                        <span style="font-size: 0.95rem;">Visualisasi Konsep Abstrak Hukum Newton</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item h-100">
+                            <div class="cover-content">
+                                <h1 class="cover-title" style="color: rgba(255,255,255,0.2);">STUDY<span class="text-orange" style="opacity: 0.2;">strip</span></h1>
+                                <h2 class="mb-4 fw-bold" style="font-size: 2rem; color: #F9A826;">Motivasi Maksimal<br>dengan Gamifikasi.</h2>
+                                <p class="cover-subtitle">Tingkatkan antusiasme siswa dalam menyelesaikan misi membaca komik dan tantangan <i>puzzle</i>. Dapatkan Koin Energi dan EXP untuk terus menaikkan level pencapaian.</p>
+                                
+                                <div class="mt-5 d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center text-light opacity-75">
+                                        <i class="fa-solid fa-gamepad text-orange me-3 fs-5"></i>
+                                        <span style="font-size: 0.95rem;">Sistem Poin, Level, dan Evaluasi Kuis</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item h-100">
+                            <div class="cover-content">
+                                <h1 class="cover-title" style="color: rgba(255,255,255,0.2);">STUDY<span class="text-orange" style="opacity: 0.2;">strip</span></h1>
+                                <h2 class="mb-4 fw-bold" style="font-size: 2rem; color: #A374FF;">Pemantauan Nilai<br>Real-Time.</h2>
+                                <p class="cover-subtitle">Pusat kendali penuh bagi guru. Pantau akumulasi skor, pencapaian level siswa, kelola bank soal, dan materi komik dengan mudah melalui dasbor yang komprehensif.</p>
+                                
+                                <div class="mt-5 d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center text-light opacity-75">
+                                        <i class="fa-solid fa-chart-line text-orange me-3 fs-5"></i>
+                                        <span style="font-size: 0.95rem;">Manajemen Data Siswa Terpusat</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#loginSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#loginSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+
+                </div>
             </div>
-            <p class="loading-text">MEMPROSES...</p>
+
+            <div class="col-lg-6 auth-form-area">
+                <div class="card card-login p-4 p-md-5">
+                    
+                    <div class="text-center mb-4 d-lg-none">
+                        <h2 class="brand-title">STUDY<span class="text-orange">strip</span></h2>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="fw-bold" style="color: #1A1A3A;">Selamat Datang</h4>
+                        <p class="text-muted small">Silakan masuk ke akun Anda untuk melanjutkan.</p>
+                    </div>
+
+                    @if($errors->any())
+                        <div class="alert alert-danger" style="font-size: 13px; border-radius: 8px;">
+                            <ul class="mb-0 ps-3">
+                                @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('login.post') }}" method="POST" id="loginForm">
+                        @csrf
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted" style="border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" name="email" class="form-control border-start-0" required style="border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Kata Sandi</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted" style="border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" name="password" class="form-control border-start-0" required style="border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input shadow-none" type="checkbox" name="remember" id="remember">
+                                <label class="form-check-label text-muted" style="font-size: 13px;" for="remember">Ingat saya</label>
+                            </div>
+                            <a href="{{ route('password.request') }}" class="text-decoration-none text-orange" style="font-size: 13px; font-weight: 600;">Lupa Sandi?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100" id="btnSubmit">
+                            <span class="btn-text">Login</span>
+                            <div class="spinner-border text-light" role="status" id="loadingSpinner"></div>
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 pt-4 border-top">
+                        <p class="text-muted mb-0" style="font-size: 13px;">Belum memiliki akun? 
+                            <a href="{{ route('register') }}" class="text-decoration-none text-dark fw-bold">Daftar di sini</a>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="glass-panel">
-        <h2><span class="text-dark">STUDY</span><span class="text-orange">strip</span></h2>
-        <p>Akses Baca Komik StudyStrip</p>
-        
-        <form action="{{ route('login.post') }}" method="POST" id="loginForm">
-            @csrf
-
-            @if ($errors->any())
-                <div style="color: #d32f2f; font-size: 13px; margin-bottom: 15px; text-align: left; background: rgba(211, 47, 47, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(211, 47, 47, 0.2);">
-                    <ul style="margin: 0; padding-left: 20px;">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <div class="input-group">
-                <label for="email">Email Operasional</label>
-                <input type="email" name="email" id="email" required>
-            </div>
-            
-            <div class="input-group">
-                <label for="password">Kata Sandi</label>
-                <input type="password" name="password" id="password" required>
-                <i class="fa fa-eye toggle-password"></i>
-            </div>
-            
-            <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-bottom: 20px;">
-                <input type="checkbox" name="remember" id="remember" style="width: auto; margin: 0; cursor: pointer;">
-                <label for="remember" style="font-size: 13px; color: #555; cursor: pointer; user-select: none;">Ingat saya!</label>
-            </div>
-
-            <button type="submit">MASUK SISTEM</button>
-
-            <div class="extra-links">
-                <a href="{{ route('password.request') }}">Lupa Kata Sandi?</a>
-                <a href="{{ route('register') }}">Belum punya akun? <span>Daftar di sini</span></a>
-            </div>
-        </form>
-    </div>
-
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // --- 1. SCRIPT MATA PASSWORD ---
-        const togglePasswordIcons = document.querySelectorAll('.toggle-password');
-        togglePasswordIcons.forEach(icon => {
-            icon.addEventListener('click', function () {
-                const passwordInput = this.previousElementSibling;
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    this.classList.remove('fa-eye');
-                    this.classList.add('fa-eye-slash');
-                } else {
-                    passwordInput.type = 'password';
-                    this.classList.remove('fa-eye-slash');
-                    this.classList.add('fa-eye');
-                }
-            });
+        // Skrip Animasi Tombol Login
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            var btn = document.getElementById('btnSubmit');
+            var text = document.querySelector('.btn-text');
+            var spinner = document.getElementById('loadingSpinner');
+            
+            btn.classList.add('btn-loading');
+            text.style.display = 'none';
+            spinner.style.display = 'inline-block';
         });
 
-        // --- 2. SCRIPT LOADING BINTANG ---
-        const loader = document.getElementById('loadingOverlay');
-
-        window.addEventListener('load', function() {
-            loader.classList.remove('active');
+        window.addEventListener('pageshow', function() {
+            document.getElementById('btnSubmit').classList.remove('btn-loading');
+            document.querySelector('.btn-text').style.display = 'inline';
+            document.getElementById('loadingSpinner').style.display = 'none';
         });
 
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', function() {
-                loader.classList.add('active');
-            });
-        }
-
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.href && !this.href.includes('#') && this.target !== '_blank') {
-                    loader.classList.add('active');
-                }
-            });
-        });
-
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                loader.classList.remove('active');
+        // Skrip Paksaan Auto-Slide Carousel
+        document.addEventListener("DOMContentLoaded", function() {
+            var loginCarousel = document.getElementById('loginSlider');
+            if (loginCarousel) {
+                new bootstrap.Carousel(loginCarousel, {
+                    interval: 3500, // Waktu slide 3.5 detik
+                    ride: 'carousel', // Jalan otomatis saat halaman dimuat
+                    pause: false // Matikan fitur pause saat mouse menyorot layar
+                });
             }
         });
     </script>

@@ -48,9 +48,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    // Fungsi untuk mengecek apakah user sedang online (aktif dalam 5 menit terakhir)
+    
+    // Fungsi untuk mengecek apakah user sedang online via Cache Middleware
     public function isOnline()
     {
-        return $this->last_seen && \Carbon\Carbon::parse($this->last_seen)->diffInMinutes(now()) < 5;
+        // Jika terakhir dilihat kurang dari 5 menit yang lalu, dianggap Online
+        return \Illuminate\Support\Facades\Cache::has('user-is-online-' . $this->id);
     }
+    
 }
