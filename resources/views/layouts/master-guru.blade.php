@@ -11,45 +11,93 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { background-color: #f5f7f9; color: #333; }
+        body { background-color: #eef2f7; color: #1f2946; }
 
         /* Desain Sidebar */
         .sidebar-admin {
-            width: 260px; height: 100vh; position: fixed; top: 0; left: 0;
-            z-index: 1000; border-right: 1px solid #eaeaea; background: #ffffff;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+            width: 280px; height: 100vh; position: fixed; top: 0; left: 0;
+            z-index: 1000; border-right: 1px solid rgba(145, 158, 171, 0.16);
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 2px 0 20px rgba(56, 65, 89, 0.08);
         }
 
-        /* Desain Area Konten */
-        .main-content { margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column;}
+        .sidebar-admin .brand {
+            padding: 28px 24px; text-align: left;
+        }
 
-        /* Desain Topbar */
+        .sidebar-admin .brand h3 {
+            margin: 0; font-family: 'Orbitron', sans-serif; font-size: 24px; letter-spacing: 1px;
+            color: #171c35;
+        }
+
+        .sidebar-admin .brand small {
+            display: block; margin-top: 6px; color: #7b8191; font-size: 13px;
+        }
+
+        .sidebar-admin .menu-section {
+            margin-top: 18px;
+        }
+
+        .sidebar-admin .menu-label {
+            color: #7b8191; font-size: 11px; letter-spacing: 1px; padding: 0 24px; margin-top: 18px;
+        }
+
+        .sidebar-admin .nav-admin {
+            color: #4b5563; font-weight: 700;
+            padding: 14px 22px; margin: 0 12px 6px 12px;
+            border-radius: 14px; display: flex; align-items: center;
+            text-decoration: none; transition: all 0.25s ease;
+            font-size: 0.95rem; background: #ffffff;
+            box-shadow: 0 6px 18px rgba(102, 113, 134, 0.06);
+        }
+
+        .sidebar-admin .nav-admin:hover {
+            transform: translateX(2px);
+            background: rgba(249, 168, 38, 0.1);
+            color: #d97706;
+        }
+
+        .sidebar-admin .nav-admin.active {
+            background: #fff3e0; color: #b45309;
+            box-shadow: inset 4px 0 0 #F9A826, 0 10px 24px rgba(249, 168, 38, 0.12);
+        }
+
+        .main-content { margin-left: 280px; min-height: 100vh; display: flex; flex-direction: column; }
+
         .topbar-admin {
-            background: #ffffff; border-bottom: 1px solid #eaeaea;
-            padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid rgba(145,158,171,0.16);
+            padding: 16px 32px; position: sticky; top: 0; z-index: 900;
+            backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Desain Menu Link */
-        .nav-admin {
-            color: #555; font-weight: 600; 
-            padding: 12px 15px;
-            border-radius: 8px; margin: 0 15px 8px 15px;
-            display: flex; align-items: center;
-            text-decoration: none; transition: 0.3s;
-            font-size: 0.95rem;
-            white-space: nowrap;
-            overflow: hidden; 
-            text-overflow: ellipsis;
+        .topbar-admin .page-title {
+            font-size: 1rem; font-weight: 700; color: #1f2946;
         }
 
-        .nav-admin:hover, .nav-admin.active {
-            background: rgba(249, 168, 38, 0.1); color: #F9A826;
+        .topbar-admin .dropdown-toggle {
+            border-radius: 28px; padding: 8px 22px; box-shadow: 0 8px 20px rgba(15,23,42,0.08);
         }
 
-        /* Perbaikan Kartu & Tabel */
-        .card { border: none !important; box-shadow: 0 5px 20px rgba(0,0,0,0.04) !important; border-radius: 12px !important; }
-        .card-header { background: transparent !important; border-bottom: 1px solid #f0f0f0 !important; }
-        .table th { background-color: #f8f9fa !important; font-weight: 600; color: #555; }
+        .card { border: none !important; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06) !important; border-radius: 18px !important; }
+        .card-header { background: transparent !important; border-bottom: 1px solid #eef2f7 !important; }
+        .table th { background-color: #f8fafc !important; font-weight: 700 !important; color: #3f4b63; }
+        .table td, .table th { vertical-align: middle; }
+
+        .breadcrumb-admin {
+            padding: 0; margin: 0; list-style: none; display: flex; gap: 10px;
+            color: #64748b; font-size: 0.9rem;
+        }
+
+        .breadcrumb-admin li a {
+            color: #64748b; text-decoration: none;
+        }
+
+        .breadcrumb-admin li::after {
+            content: '/'; margin: 0 8px; color: #cbd5e1;
+        }
+
+        .breadcrumb-admin li:last-child::after { content: ''; }
     </style>
 </head>
 <body>
@@ -68,8 +116,11 @@
             <a href="{{ url('/guru/kategori') }}" class="nav-admin {{ request()->is('guru/kategori*') ? 'active' : '' }}">
                 Kategori & Genre
             </a>
-            <a href="{{ route('comic.create') }}" class="nav-admin {{ request()->is('upload-komik*') || request()->is('guru/komik*') ? 'active' : '' }}">
+            <a href="{{ route('guru.komik.index') }}" class="nav-admin {{ request()->is('guru/komik*') ? 'active' : '' }}">
                 Manajemen Komik
+            </a>
+            <a href="{{ route('comic.create') }}" class="nav-admin {{ request()->is('upload-komik*') ? 'active' : '' }}">
+                Unggah Komik
             </a>
             <a href="{{ url('/guru/kuis') }}" class="nav-admin {{ request()->is('guru/kuis*') ? 'active' : '' }}">
                 Manajemen Kuis & Misi
@@ -82,17 +133,27 @@
             <a href="{{ url('/guru/pengumuman') }}" class="nav-admin {{ request()->is('guru/pengumuman*') ? 'active' : '' }}">
                 Pusat Pengumuman
             </a>
+            <a href="{{ route('guru.chat') }}" class="nav-admin {{ request()->routeIs('guru.chat') ? 'active' : '' }}">
+                Pusat Pesan (Chat)
+            </a>
         </div>
     </div>
     
     <div class="main-content">
-        <div class="topbar-admin d-flex justify-content-end align-items-center">
+        <div class="topbar-admin">
+            <div>
+                <div class="page-title">@yield('pageTitle', 'Dashboard Guru')</div>
+                <ul class="breadcrumb-admin mt-2">
+                    <li><a href="{{ route('dashboard') }}">Beranda</a></li>
+                    <li>@yield('pageTitle', 'Dashboard')</li>
+                </ul>
+            </div>
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle fw-bold shadow-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 20px; padding: 8px 20px;">
+                <button class="btn btn-light dropdown-toggle fw-bold shadow-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-user-circle fs-5 me-2 align-middle text-secondary"></i>
                     {{ Auth::user()->name ?? 'Guru' }}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="dropdownMenuButton" style="border-radius: 12px; min-width: 200px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="dropdownMenuButton" style="border-radius: 12px; min-width: 220px;">
                     <li>
                         <a class="dropdown-item py-2 fw-bold text-secondary" href="{{ route('guru.pengaturan') }}">
                             <i class="fa-solid fa-user-gear me-2"></i> Pengaturan Profil

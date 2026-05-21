@@ -93,30 +93,45 @@
         <div class="flip-book" id="book">
             
             <div class="page -cover">
-                <h5 class="fw-bold text-warning mb-2" style="letter-spacing: 2px;">EPISODE 01</h5>
-                <h3 class="fw-bold mb-4">Gaya & Gravitasi</h3>
-                <img src="https://img.freepik.com/free-vector/flat-gravity-background_23-2149348981.jpg" alt="Cover Komik" style="width: 85%; border-radius: 10px; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                <h5 class="fw-bold text-warning mb-2" style="letter-spacing: 2px;">EPISODE {{ $comic->chapter_number ?? '01' }}</h5>
+                <h3 class="fw-bold mb-4">{{ $comic->chapter_title ?? 'Judul Komik' }}</h3>
+                @if(isset($pages) && count($pages) > 0)
+                    <img src="{{ $pages[0] }}" alt="Cover Komik" style="width: 85%; border-radius: 10px; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                @else
+                    <img src="https://img.freepik.com/free-vector/flat-gravity-background_23-2149348981.jpg" alt="Cover Komik" style="width: 85%; border-radius: 10px; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                @endif
                 <div class="mt-5 text-light" style="opacity: 0.8; font-size: 14px;">
                     <i class="fa-solid fa-hand-pointer me-2"></i>Tarik sudut kertas untuk membaca
                 </div>
             </div>
 
-            <div class="page">
-                <img src="https://img.freepik.com/free-vector/comic-book-page-template-design_1017-38661.jpg" class="comic-img" alt="Halaman 1">
-            </div>
+            @if(isset($pages) && count($pages) > 0)
+                @foreach($pages as $i => $p)
+                    @if($i === 0)
+                        @continue
+                    @endif
+                    <div class="page">
+                        <img src="{{ $p }}" class="comic-img" alt="Halaman {{ $i }}">
+                    </div>
+                @endforeach
+            @else
+                <div class="page">
+                    <img src="https://img.freepik.com/free-vector/comic-book-page-template-design_1017-38661.jpg" class="comic-img" alt="Halaman 1">
+                </div>
 
-            <div class="page">
-                <img src="https://img.freepik.com/free-vector/comic-empty-panels-set-with-speech-bubbles-sound-effects_225004-1065.jpg" class="comic-img" alt="Halaman 2">
-            </div>
+                <div class="page">
+                    <img src="https://img.freepik.com/free-vector/comic-empty-panels-set-with-speech-bubbles-sound-effects_225004-1065.jpg" class="comic-img" alt="Halaman 2">
+                </div>
 
-            <div class="page">
-                <img src="https://img.freepik.com/free-vector/comic-book-page-template-with-empty-speech-bubbles_1017-38662.jpg" class="comic-img" alt="Halaman 3">
-            </div>
+                <div class="page">
+                    <img src="https://img.freepik.com/free-vector/comic-book-page-template-with-empty-speech-bubbles_1017-38662.jpg" class="comic-img" alt="Halaman 3">
+                </div>
+            @endif
 
             <div class="page -cover">
                 <i class="fa-solid fa-circle-check text-success mb-3" style="font-size: 50px;"></i>
                 <h3 class="fw-bold mb-3">Bab Selesai!</h3>
-                <p class="mb-5 opacity-75" style="font-size: 14px;">Kamu telah menyelesaikan materi Hukum Newton 1. Lanjutkan ke Ruang Evaluasi untuk menguji nalar rekayasamu.</p>
+                <p class="mb-5 opacity-75" style="font-size: 14px;">Kamu telah menyelesaikan materi ini. Lanjutkan ke Ruang Evaluasi untuk menguji pemahamanmu.</p>
                 <button type="button" onclick="tampilkanPopUp()" class="btn btn-warning fw-bold rounded-pill px-4 py-3 shadow-lg" style="position: relative; z-index: 9999;">
                     <i class="fa-solid fa-coins me-2"></i> Klaim Poin SEKARANG
                 </button>

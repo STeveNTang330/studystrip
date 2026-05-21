@@ -14,30 +14,59 @@ class ComicController extends Controller
         return view('guru.upload-komik');
     }
 
+    public function index()
+    {
+        $comics = Comic::all()->map(function ($comic) {
+            $pagesDir = public_path($comic->file_path . '/pages');
+            $comic->page_count = File::exists($pagesDir) ? count(File::files($pagesDir)) : 0;
+            return $comic;
+        });
+
+        return view('guru.komik', compact('comics'));
+    }
+
     // --- 2. FUNGSI PENYIMPANAN YANG BARU (FILE + DATABASE) ---
     public function store(Request $request)
     {
         $request->validate([
             'chapter_number' => 'required|numeric',
-            'chapter_title'  => 'required|string|max:255',
+            'title'          => 'required|string|max:255',
             'description'    => 'nullable|string',
-            'comic_file'     => 'required|file|mimes:jpeg,png,jpg,pdf|max:10240', 
+            'visual_assets'  => 'required',
+            'visual_assets.*'=> 'file|mimes:jpeg,png,jpg,gif,svg,webp|max:51200',
         ]);
 
-        if ($request->hasFile('comic_file')) {
-            $file = $request->file('comic_file');
-            $nama_file = time() . "_" . $file->getClientOriginalName();
-            $file->move(public_path('komik'), $nama_file);
-            
-            Comic::create([
-                'chapter_number' => $request->chapter_number,
-                'chapter_title'  => $request->chapter_title,
-                'description'    => $request->description,
-                'file_path'      => $nama_file, 
-            ]);
+        // Create comic record first to obtain an ID
+        $comic = Comic::create([
+            'chapter_number' => $request->chapter_number,
+            'chapter_title'  => $request->title,
+            'description'    => $request->description ?? $request->prompt_script ?? '',
+            'file_path'      => '',
+        ]);
+
+        // Create directory for this comic's pages
+        $comicDir = public_path('komik/' . $comic->id);
+        $pagesDir = $comicDir . '/pages';
+        if (!File::exists($pagesDir)) {
+            File::makeDirectory($pagesDir, 0755, true);
         }
 
-        return back()->with('success', 'Luar biasa! Bab ' . $request->chapter_number . ' - "' . $request->chapter_title . '" berhasil disimpan ke database.');
+        // Move uploaded visual assets into pages directory
+        if ($request->hasFile('visual_assets')) {
+            $i = 0;
+            foreach ($request->file('visual_assets') as $file) {
+                $i++;
+                $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $file->getClientOriginalName());
+                $targetName = sprintf('%02d_%s', $i, $safeName);
+                $file->move($pagesDir, $targetName);
+            }
+        }
+
+        // Save comic file_path as the comic folder path
+        $comic->file_path = 'komik/' . $comic->id;
+        $comic->save();
+
+        return back()->with('success', 'Luar biasa! Bab ' . $request->chapter_number . ' - "' . $request->title . '" berhasil disimpan.');
     }
 
     // --- 3. FUNGSI UNTUK MENGHAPUS KOMIK DARI DATABASE & FOLDER ---
@@ -45,9 +74,9 @@ class ComicController extends Controller
     {
         $comic = Comic::findOrFail($id);
 
-        $file_path = public_path('komik/' . $comic->file_path);
+        $file_path = public_path($comic->file_path);
         if (File::exists($file_path)) {
-            File::delete($file_path);
+            File::deleteDirectory($file_path);
         }
 
         $comic->delete();
@@ -59,7 +88,19 @@ class ComicController extends Controller
     public function read($id)
     {
         $comic = \App\Models\Comic::findOrFail($id);
-        return view('siswa.baca-komik', compact('comic'));
+
+        $pages = [];
+        $pagesDir = public_path('komik/' . $comic->id . '/pages');
+        if (File::exists($pagesDir)) {
+            $files = File::files($pagesDir);
+            // Sort by filename
+            usort($files, function($a, $b){ return strcmp($a->getFilename(), $b->getFilename()); });
+            foreach ($files as $f) {
+                $pages[] = url('komik/' . $comic->id . '/pages/' . $f->getFilename());
+            }
+        }
+
+        return view('siswa.baca-komik', compact('comic','pages'));
     }
 
     // --- 5. Fungsi untuk mengklaim koin & EXP (DENGAN ANTI-SPAM) ---
