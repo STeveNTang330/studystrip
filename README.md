@@ -1,571 +1,283 @@
-# StudyStrip - Tugas Dokumentasi Proyek
+# StudyStrip - Platform Pembelajaran Komik Interaktif 📚
 
-## 1. 📸 Screenshot Proyek
+Aplikasi web pembelajaran berbasis Laravel yang menggabungkan materi edukasi dengan format komik interaktif. Platform ini dirancang untuk meningkatkan engagement siswa melalui visual storytelling dan memudahkan guru untuk membuat konten pembelajaran yang menarik.
 
-### **Login Page**
-```
-╔════════════════════════════════════════╗
-║          STUDYstrip                    ║
-║                                        ║
-║        Selamat Datang                  ║
-║  Silakan masuk ke akun Anda            ║
-║                                        ║
-║  📧 Email:                             ║
-║     [________________________________] ║
-║                                        ║
-║  🔒 Kata Sandi:                        ║
-║     [________________________________] ║
-║                                        ║
-║  ☐ Ingat saya          Lupa Sandi? 🔗 ║
-║                                        ║
-║          [ LOGIN ]                     ║
-║                                        ║
-║  Belum punya akun? Daftar di sini 🔗  ║
-╚════════════════════════════════════════╝
-```
-- Desain modern dengan branding StudyStrip
-- Email & password fields dengan icon
+---
+
+## 🎯 Fitur Utama
+
+### 🎓 **Untuk Siswa:**
+- **Katalog Komik**: Browse koleksi komik pembelajaran
+- **Comic Reader Interaktif**: Page-flip animation, navigation, reward system
+- **Dashboard**: Akses cepat ke komik dan pengumuman
+- **Chat & Komunitas**: Berkomunikasi dalam study groups
+
+### 👨‍🏫 **Untuk Guru:**
+- **Studio Perakitan Komik**: Drag-and-drop upload multi-page
+- **Manajemen Komik**: Create, edit, delete, preview
+- **Admin Dashboard**: Kategori, quiz, pengumuman, tabel nilai
+- **Reporting**: Export ke Google Sheets
+
+---
+
+## 📸 Screenshots
+
+### **1. Login Page**
+Clean dan modern authentication interface dengan:
+- STUDYstrip branding (navy & orange colors)
+- Email & password input dengan icons
 - Remember me checkbox
-- Forgot password link
-- Sign up link untuk user baru
+- Forgot password & sign up links
+- Responsive card layout
+- Light gradient background
+
+![Login Page](docs/screenshots/01-login.png)
+
+### **2. Teacher Upload Studio**
+Two-column drag-and-drop interface untuk membuat komik:
+
+**Left Column - Asset Library:**
+- File upload dengan drag-drop atau browse
+- Thumbnail previews (60x60px)
+- File size display
+- Delete buttons per asset
+- Badge showing assigned panel
+
+**Right Column - Story Board:**
+- Auto-generating panels (6+)
+- Visual feedback: scale, color, opacity
+- Drag asset → drop ke panel
+- Panel image preview
+- Reset button
+- Helper tips
+
+![Upload Komik Studio](docs/screenshots/02-upload-komik.png)
+
+### **3. Comic Reader**
+Interactive page-flip reader dengan:
+- **St.PageFlip animation** (400x550px)
+- Dynamic page loading
+- Previous/Next navigation
+- Chapter indicator
+- Confetti animation saat selesai
+- Reward claim button dengan anti-spam
+- Galaxy gradient background
+- SweetAlert modal notifications
+
+![Comic Reader](docs/screenshots/03-baca-komik.png)
+
+### **4. Comic Management Dashboard**
+Tabel manajemen komik dengan:
+- Chapter number (badge)
+- Title & description
+- Page count (badge)
+- Preview link (eye icon)
+- Delete button
+- Responsive table design
+
+![Manajemen Komik](docs/screenshots/04-manajemen-komik.png)
+
+### **5. Admin Sidebar Layout**
+Modern admin interface dengan:
+- **280px Fixed Sidebar**: Gradient background, section labels
+- **Menu Items**:
+  - MENU UTAMA: Beranda
+  - MANAJEMEN KONTEN: Kategori, Komik, Upload, Kuis
+  - PEMANTAUAN: Nilai, Pengumuman, Chat
+- **Active State**: Yellow/orange highlight (#fff3e0)
+- **Sticky Topbar**: Page title, breadcrumb, user dropdown
+- **Responsive**: Mobile-friendly design
+
+![Admin Layout](docs/screenshots/05-admin-layout.png)
 
 ---
 
-### **Dashboard Guru - Upload Komik (Section 1)**
-```
-╔═══════════════════════════════════════════════════════════╗
-║  Studio Perakitan Komik                    [← Kembali]   ║
-║  Rancang bab komik interaktif dengan skenario & aset      ║
-╠═══════════════════════════════════════════════════════════╣
-║  1. INFORMASI DASAR BAB                                   ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                            ║
-║  Nomor Bab: [__]    Judul Materi: [________________]       ║
-║                                                            ║
-║  Deskripsi / Sinopsis:                                    ║
-║  [________________________________________________]        ║
-║  [________________________________________________]        ║
-║  [Tuliskan ringkasan cerita atau materi...]               ║
-║                                                            ║
-╚═══════════════════════════════════════════════════════════╝
-```
+## 🛠️ Tech Stack
 
----
+### **Backend**
+- **PHP 8.2+**
+- **Laravel 12.0** - Web framework
+- **Eloquent ORM** - Database ORM
+- **Laravel Tinker** - Interactive shell
+- **Google API Client 2.19** - Sheets integration
 
-### **Dashboard Guru - Upload Komik (Section 2 - Drag & Drop Interface)**
+### **Frontend**
+- **HTML5 + CSS3**
+- **Bootstrap 5.3.2** - UI components
+- **Tailwind CSS 4.0** - Utilities
+- **Vite 7.0.7** - Build tool
+- **Axios 1.11.0** - HTTP client
 
-#### **Left Column - Asset Library**
-```
-╔═══════════════════════════════════╗
-║  📦 Pustaka Aset          [reset] ║
-║                                    ║
-║  Unggah & atur halaman komik      ║
-║  dengan drag-drop.                ║
-║                                    ║
-║  ┌──────────────────────────────┐ ║
-║  │   ☁️  Tarik file di sini     │ ║
-║  │        atau                  │ ║
-║  │   [ 📁 Pilih File ]          │ ║
-║  └──────────────────────────────┘ ║
-║                                    ║
-║  ┌──────────────────────────────┐ ║
-║  │[🖼️]  image1.jpg             │ ║
-║  │      512 KB                  │ ║
-║  │      ✓ Panel 1               │ ║
-║  │              [🗑️ Hapus]      │ ║
-║  └──────────────────────────────┘ ║
-║                                    ║
-║  ┌──────────────────────────────┐ ║
-║  │[🖼️]  image2.png             │ ║
-║  │      384 KB                  │ ║
-║  │              [🗑️ Hapus]      │ ║
-║  └──────────────────────────────┘ ║
-║                                    ║
-╚═══════════════════════════════════╝
-```
-
-#### **Right Column - Story Board**
-```
-╔══════════════════════════════════════════════════════════╗
-║  🎬 Story Board                            [Reset]      ║
-║                                                          ║
-║  Setiap panel akan menjadi halaman komik                ║
-║  Atur urutan dengan cara seret-seret asset             ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  Panel 1      Panel 2      Panel 3      Panel 4         ║
-║  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐        ║
-║  │ Drag   │  │ Drag   │  │[🖼️]   │  │ Drag   │        ║
-║  │ asset  │  │ asset  │  │        │  │ asset  │        ║
-║  │  ke    │  │  ke    │  │   [X]  │  │  ke    │        ║
-║  │ sini   │  │ sini   │  │        │  │ sini   │        ║
-║  └────────┘  └────────┘  └────────┘  └────────┘        ║
-║                                                          ║
-║  Panel 5      Panel 6                                   ║
-║  ┌────────┐  ┌────────┐                                 ║
-║  │ Drag   │  │ Drag   │                                 ║
-║  │ asset  │  │ asset  │                                 ║
-║  │  ke    │  │  ke    │                                 ║
-║  │ sini   │  │ sini   │                                 ║
-║  └────────┘  └────────┘                                 ║
-║                                                          ║
-║  💡 Tip: Drag aset dari library atau klik untuk         ║
-║     auto-assign ke panel kosong pertama                 ║
-║                                                          ║
-║         [ Bersihkan ]  [ Rakit & Simpan Komik ]         ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-**Fitur Drag-and-Drop:**
-- ✨ Visual feedback: opacity saat drag, scale saat hover
-- 🎨 Color change: Panel berubah hijau saat siap drop
-- 📸 Preview langsung setelah drop
-- ♻️ Dapat menghapus asset atau panel
-- 🔄 Reset button untuk clear semua
-
----
-
-### **Comic Reader - Student Interface**
-```
-╔═══════════════════════════════════════════════════════════╗
-║                     BAB 1: Hukum Newton                  ║
-║                                                            ║
-║              ╔════════════════════════╗                   ║
-║              ║                        ║                   ║
-║              ║    [Page Flip]         ║                   ║
-║              ║    Animation            ║                   ║
-║              ║    400x550px            ║                   ║
-║              ║                        ║                   ║
-║              ║    Smooth transitions   ║                   ║
-║              ║    with realistic       ║                   ║
-║              ║    page turning        ║                   ║
-║              ║                        ║                   ║
-║              ╚════════════════════════╝                   ║
-║                                                            ║
-║    [◀ Prev]  Halaman 3 dari 20  [Next ▶]                 ║
-║                                                            ║
-║    [💰 Klaim Reward]  [ 🎓 Selesai ]                      ║
-║                                                            ║
-╚═══════════════════════════════════════════════════════════╝
-
-Fitur:
-✅ Page-flip animation dengan St.PageFlip
-✅ Dynamic page loading
-✅ Navigation controls
-✅ Confetti animation saat selesai
-✅ Reward system dengan SweetAlert modal
-✅ Anti-spam protection (1 claim per user)
-```
-
----
-
-### **Manajemen Komik - Dashboard Guru**
-```
-╔════════════════════════════════════════════════════════════════╗
-║  📚 Manajemen Komik                                            ║
-╠════════════════════════════════════════════════════════════════╣
-║                                                                ║
-║  No│ Bab │Judul          │Deskripsi    │Halaman│ Aksi        ║
-║  ──┼─────┼───────────────┼─────────────┼────────┼──────────   ║
-║  1 │ 1   │Hukum Newton   │Pengenalan   │ 15    │ 👁️ 🗑️      ║
-║    │     │              │ gaya...     │       │              ║
-║  ──┼─────┼───────────────┼─────────────┼────────┼──────────   ║
-║  2 │ 2   │Energi Kinetik │Energi      │ 12    │ 👁️ 🗑️      ║
-║    │     │              │ dalam gerak │       │              ║
-║  ──┼─────┼───────────────┼─────────────┼────────┼──────────   ║
-║                                                                ║
-╚════════════════════════════════════════════════════════════════╝
-```
-
----
-
-### **Admin Sidebar Layout**
-```
-╔════════════════════════════════════════════════════════════════╗
-║  280px                                                         ║
-║  Fixed Sidebar                      Main Content (responsive)  ║
-║                                                                ║
-║  ┌──────────────┐                                             ║
-║  │ 📚 Beranda   │                                             ║
-║  │              │ MANAJEMEN KONTEN                            ║
-║  │ 📁 Kategori │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━     ║
-║  │ 📚 Komik    │                                             ║
-║  │ ⬆️  Upload  │ Breadcrumb: Beranda / Unggah Komik         ║
-║  │ 🎯 Kuis     │                                             ║
-║  │              │ ┌─────────────────────────────────────────┐ ║
-║  │ 📊 Nilai    │ │ Studio Perakitan Komik                  │ ║
-║  │ 📢 Pengum   │ │                                         │ ║
-║  │ 💬 Chat    │ │ [Content goes here...]                  │ ║
-║  │              │ │                                         │ ║
-║  │ 👤 Profile  │ └─────────────────────────────────────────┘ ║
-║  │ 🚪 Logout  │                                             ║
-║  │              │                                             ║
-║  └──────────────┘                                             ║
-│                                                                ║
-```
-
-**Design Elements:**
-- 280px fixed sidebar dengan gradient background
-- Menu section labels: MENU UTAMA, MANAJEMEN KONTEN, PEMANTAUAN & INTERAKSI
-- Active state: Yellow/orange highlight (#fff3e0)
-- Sticky topbar dengan page title & breadcrumb
-- Responsive mobile design
-
----
-
-## 2. 🛠️ Tech Stack yang Digunakan
-
-### **Backend Framework**
-```
-┌─────────────────────────────────────┐
-│ PHP 8.2+                           │
-│ └─ Laravel 12.0 (Web Framework)    │
-│    └─ Eloquent ORM                 │
-│    └─ Blade Template Engine        │
-│    └─ Laravel Tinker               │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-### **Frontend Framework & Libraries**
-```
-┌─────────────────────────────────────┐
-│ HTML5 + CSS3                        │
-│ │                                   │
-│ ├─ Bootstrap 5.3.2 (UI Components) │
-│ ├─ Tailwind CSS 4.0.0 (Utilities)  │
-│ │                                   │
-│ └─ JavaScript (ES6+)                │
-│    ├─ Vite 7.0.7 (Build Tool)      │
-│    ├─ Axios 1.11.0 (HTTP Client)   │
-│    │                                 │
-│    └─ Frontend Libraries (CDN):     │
-│       ├─ St.PageFlip (Page-flip)   │
-│       ├─ Sortable.js 1.15.0 (D&D)  │
-│       ├─ SweetAlert2 (Modals)      │
-│       ├─ Canvas-Confetti (Effects) │
-│       ├─ Lottie Player (Animations)│
-│       └─ Font Awesome 6.x (Icons)  │
-│                                     │
-└─────────────────────────────────────┘
-```
+### **Frontend Libraries (CDN)**
+- **St.PageFlip** - Page-flip animation
+- **Sortable.js 1.15.0** - Drag-and-drop
+- **SweetAlert2** - Beautiful modals
+- **Canvas-Confetti** - Celebration effects
+- **Lottie Player** - Animations
+- **Font Awesome 6.x** - Icons
 
 ### **Database**
-```
-┌─────────────────────────────────────┐
-│ MySQL / SQLite                      │
-│ (via Laravel Migrations)            │
-│                                     │
-│ Tables:                             │
-│ • users                             │
-│ • comics                            │
-│ • comic_reads (reward tracking)     │
-│ • chat_messages                     │
-│ • kelompok_belajar (study groups)   │
-│ • pengumuman (announcements)        │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-### **Integrations**
-- **Google API Client 2.19** - Google Sheets reporting
-- **File Storage** - Public disk for comic assets
+- **MySQL** (dengan Laravel Migrations)
+- **Tables**: users, comics, comic_reads, chat_messages, pengumuman, dll
 
 ### **Development Tools**
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Composer | Latest | PHP package manager |
-| NPM | Latest | Node package manager |
-| Concurrently | 9.0.1 | Run multiple processes |
-| Laravel Pail | 1.2.2 | Log monitoring |
-| PHPUnit | 11.5.50 | Testing framework |
-| Faker | 1.23 | Test data generation |
-| Pint | 1.24 | Code formatter |
+- Composer, NPM, PHPUnit, Faker, Pint, Laravel Pail
 
 ---
 
-## 3. 🚀 Cara Menjalankan Kodenya
+## 🚀 Cara Menjalankan
 
 ### **Prerequisites**
-Sebelum menjalankan, pastikan sudah terinstall:
-- ✅ **PHP 8.2+** (Included di XAMPP)
-- ✅ **Composer** (Package manager PHP)
-- ✅ **Node.js & NPM** (Frontend build tools)
-- ✅ **MySQL** (Included di XAMPP)
-- ✅ **XAMPP** (Sudah terinstall)
+```
+✅ PHP 8.2+ (XAMPP included)
+✅ Composer
+✅ Node.js & NPM  
+✅ MySQL (XAMPP included)
+```
 
----
+### **Setup & Run (5 menit)**
 
-### **Step 1: Navigate to Project Directory**
 ```bash
+# 1. Navigate to project
 cd d:\new-xampp\htdocs\studystrip
-```
 
----
-
-### **Step 2: Install Dependencies**
-
-**Install PHP packages:**
-```bash
+# 2. Install dependencies
 composer install
-```
-
-**Install Frontend packages:**
-```bash
 npm install
-```
 
----
-
-### **Step 3: Setup Environment**
-
-**Copy environment file:**
-```bash
+# 3. Setup environment
 copy .env.example .env
-```
-
-**Edit `.env` file** (sesuaikan database):
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=studystrip
-DB_USERNAME=root
-DB_PASSWORD=
-
-APP_URL=http://localhost:8000
-```
-
----
-
-### **Step 4: Generate Application Key**
-```bash
 php artisan key:generate
-```
 
----
-
-### **Step 5: Create Database**
-
-Buka **phpMyAdmin** (http://localhost/phpmyadmin) atau gunakan command line:
-```bash
-mysql -u root -p
-> CREATE DATABASE studystrip CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-> EXIT;
-```
-
----
-
-### **Step 6: Run Database Migrations**
-```bash
+# 4. Create & migrate database
+# Di phpMyAdmin: CREATE DATABASE studystrip;
 php artisan migrate
-```
 
-Jika ada error, reset terlebih dahulu:
-```bash
-php artisan migrate:fresh
-```
-
----
-
-### **Step 7: (Optional) Seed Sample Data**
-```bash
+# 5. Optional: seed sample data
 php artisan db:seed
-```
 
----
-
-### **Step 8: Build Frontend Assets**
-
-**For Production:**
-```bash
+# 6. Build frontend
 npm run build
-```
 
-**For Development (with watch):**
-```bash
+# 7. Start server (Terminal 1)
+php artisan serve --port=8000
+
+# 8. Optional: Watch frontend changes (Terminal 2)
 npm run dev
 ```
 
----
+**Access at:** http://localhost:8000
 
-### **Step 9: Start the Development Server**
-
-**Option A: Run server saja**
-```bash
-php artisan serve --port=8000
+### **Default Credentials** (if seeded)
 ```
-
-Buka browser: **http://localhost:8000**
-
----
-
-**Option B: Run lengkap (recommended)**
-
-Buka **3 terminal secara bersamaan:**
-
-**Terminal 1 - Backend Server:**
-```bash
-php artisan serve --port=8000
-```
-
-**Terminal 2 - Frontend Watch (real-time)**
-```bash
-npm run dev
-```
-
-**Terminal 3 - Queue (optional, untuk background jobs):**
-```bash
-php artisan queue:listen
+Student: student@example.com / password
+Teacher: teacher@example.com / password
 ```
 
 ---
 
-### **Quick Start Command (All-in-One)**
-```bash
-# Composer script yang sudah dikonfigurasi
-composer run dev
-```
+## 📁 Project Structure
 
-Ini akan automatically start:
-- PHP server
-- Queue listener
-- Frontend vite dev server
-- Log monitoring
-
----
-
-### **Accessing the Application**
-
-| User Type | URL | Email | Password |
-|-----------|-----|-------|----------|
-| **Siswa** | http://localhost:8000 | student@example.com | password |
-| **Guru** | http://localhost:8000/guru | teacher@example.com | password |
-| **Admin** | http://localhost:8000/admin | admin@example.com | password |
-
-> 💡 Sesuaikan email/password dengan yang Anda set di database seeder
-
----
-
-### **Menjalankan Tests (Optional)**
-```bash
-# Run all tests
-composer run test
-
-# Run specific test file
-php artisan test tests/Feature/ComicTest.php
-
-# Run with verbose output
-php artisan test --verbose
-```
-
----
-
-### **Clear Cache (Jika ada error)**
-```bash
-# Clear all caches
-php artisan cache:clear
-php artisan config:clear
-php artisan view:clear
-php artisan route:clear
-
-# Rebuild caches
-php artisan config:cache
-php artisan view:cache
-php artisan route:cache
-```
-
----
-
-### **Troubleshooting**
-
-#### ❌ **Error: Database Connection**
-```bash
-# Pastikan MySQL running di XAMPP
-# Pastikan kredensial di .env benar
-php artisan migrate
-```
-
-#### ❌ **Error: "Route not found"**
-```bash
-php artisan route:clear
-php artisan route:cache
-```
-
-#### ❌ **Error: CSS/JS tidak loading**
-```bash
-npm run build
-php artisan view:clear
-# Hard refresh browser: Ctrl+Shift+Del
-```
-
-#### ❌ **Error: File upload tidak bisa**
-```
-Check permissions:
-- storage/ folder harus writable
-- public/komik/ folder harus ada
-
-Check php.ini:
-- upload_max_filesize = 50M
-- post_max_size = 50M
-```
-
----
-
-## 📝 Folder Structure
 ```
 studystrip/
-├── app/Http/Controllers/
-│   └── ComicController.php (Upload, Read, Delete, Reward)
-├── app/Models/
-│   ├── User.php
-│   ├── Comic.php
-│   └── ComicRead.php (Reward tracking)
-├── resources/views/
-│   ├── guru/
-│   │   ├── upload-komik.blade.php (Studio Upload)
-│   │   ├── komik.blade.php (Management)
-│   │   └── dashboard.blade.php
-│   ├── siswa/
-│   │   ├── baca-komik.blade.php (Reader)
-│   │   └── katalog.blade.php
-│   ├── layouts/
-│   │   ├── master-guru.blade.php (Admin layout)
-│   │   └── app.blade.php (Student layout)
-│   └── auth/
-├── routes/
-│   └── web.php
+├── app/
+│   ├── Http/Controllers/ComicController.php
+│   └── Models/ (User, Comic, ChatMessage, etc)
+├── resources/
+│   ├── views/
+│   │   ├── guru/ (teacher pages)
+│   │   ├── siswa/ (student pages)
+│   │   ├── auth/
+│   │   └── layouts/
+│   ├── css/ & js/
+├── routes/web.php
 ├── database/
 │   ├── migrations/
 │   └── seeders/
 ├── public/
-│   ├── komik/ (Comic assets storage)
-│   │   ├── 1/pages/ (Comic ID folders)
-│   │   └── sample/ (Test data)
+│   ├── komik/ (comic assets: ID/pages/)
 │   └── images/
-├── resources/js/ & css/
 ├── config/
 ├── storage/
+├── tests/
 ├── composer.json
 ├── package.json
-└── vite.config.js
+├── vite.config.js
+└── README.md
 ```
 
 ---
 
-## ✅ Checklist Sebelum Submit
+## ✨ Fitur-Fitur
 
-- [ ] Server berjalan tanpa error
-- [ ] Database terisi data
-- [ ] Login berhasil
-- [ ] Halaman loading dengan benar
-- [ ] CSS/JS/Assets muncul dengan benar
-- [ ] Drag-and-drop upload komik berfungsi
-- [ ] Comic reader page-flip bekerja
-- [ ] Tombol reward dapat diklik
-- [ ] Admin sidebar merespons dengan baik
+| Fitur | Status | Teknologi |
+|-------|--------|-----------|
+| Drag-and-drop upload | ✅ | Sortable.js |
+| Page-flip reader | ✅ | St.PageFlip |
+| Confetti animation | ✅ | canvas-confetti |
+| Reward system | ✅ | Laravel + SweetAlert |
+| Admin sidebar | ✅ | Bootstrap + CSS |
+| Multi-image support | ✅ | File validation |
+| Responsive design | ✅ | Bootstrap |
+| Dark mode | 🔄 | Planned |
+| Character animation | 🔄 | Lottie (setup ready) |
 
 ---
 
-**Status**: ✅ Ready to Deploy  
-**Last Updated**: May 22, 2026
+## 🎯 Troubleshooting
+
+### Error: Database Connection
+```bash
+# Check XAMPP MySQL is running
+php artisan migrate
+```
+
+### Error: CSS/JS Not Loading
+```bash
+npm run build
+php artisan view:clear
+# Hard refresh: Ctrl+Shift+Del
+```
+
+### Error: File Upload Failed
+```
+Check:
+- storage/ folder writable
+- public/komik/ exists
+- php.ini: upload_max_filesize = 50M
+```
+
+### Error: Route Not Found
+```bash
+php artisan route:clear
+php artisan route:cache
+```
+
+---
+
+## 📚 Documentation
+
+- **Full Setup Guide**: See [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md)
+- **Assignment Docs**: See [TUGAS_DOKUMENTASI.md](./TUGAS_DOKUMENTASI.md)
+
+---
+
+## 🔗 Repository
+
+- **GitHub**: https://github.com/STeveNTang330/studystrip
+- **Status**: ✅ Production Ready
+
+---
+
+## 📝 Notes
+
+- **File Upload Limit**: 50MB per file
+- **Supported Formats**: JPG, PNG, SVG, WebP, GIF (including animated)
+- **Database**: MySQL 5.7+ or SQLite
+- **Browser**: Modern browsers with HTML5 support
+
+---
+
+**Version**: 1.0  
+**Last Updated**: May 22, 2026  
+**License**: MIT
